@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Opportunity Lab
+
+AI-powered product discovery platform that helps users find, evaluate, and structure real problems into actionable product concepts.
+
+## What It Does
+
+You enter a topic or market. The AI researches the space, surfaces real problems with supporting evidence, helps you evaluate which ones are worth pursuing, and turns your selected opportunity into a structured product concept — with a name, solution, MVP scope, business model, and more. You can refine individual sections, save your work, and return to it later.
+
+## Why It Exists
+
+**The problem:** Most people skip straight to building solutions without understanding whether the problem is real, validated, or worth solving. Existing tools either generate random ideas without evidence or provide overwhelming market research without actionable structure.
+
+**Who it is for:** Solo founders, product managers, and anyone exploring new product ideas who wants a structured, evidence-based approach to evaluating opportunities before committing to building.
+
+## User Flow
+
+```
+Topic
+→ Discover Problems
+→ Explore Problem
+→ Select Problem
+→ Evaluate Opportunity
+→ Create Product Concept
+→ Refine
+→ Save
+```
+
+Each step builds on the previous one. Users always know where they are and can go back to review earlier decisions.
+
+## Core Features & Product Decisions
+
+- **Problem Discovery:** Helps users find potential problems within a topic instead of generating random startup ideas. Returns 4-6 problems with descriptions, affected users, and confidence levels.
+
+- **Problem Exploration:** Users can expand a problem and understand it before deciding to pursue it. Each problem shows supporting evidence, inferences, and assumptions — clearly distinguished.
+
+- **Evidence Classification:** Every piece of research is tagged as evidence, inference, or assumption. This forces honesty about what is actually known versus what is assumed.
+
+- **Problem Selection:** Users explicitly choose one problem to evaluate. This creates a clear decision point and prevents scattered focus.
+
+- **Opportunity Evaluation:** Scores the selected problem across 8 dimensions (severity, frequency, pain, market, competition, etc.) with a weighted overall score. Helps users assess an opportunity before jumping into a solution.
+
+- **Product Concept Generation:** Turns a selected problem into a structured product concept with 15 sections — name, solution, features, MVP scope, user journey, business model, risks, assumptions, and validation questions.
+
+- **Section-Level Refinement:** Allows users to refine specific parts of a concept instead of regenerating everything. Each section can be independently improved while preserving the rest.
+
+- **Saved Opportunities:** Lets users return to ideas they have already explored. Opportunities are persisted with full context — problem, evidence, evaluation, and concept.
+
+- **Workspace:** A dedicated space to view, manage, and continue working on saved opportunities. Includes status tracking and last-updated timestamps.
+
+## Development Phases
+
+The product was divided into three phases based on the user flow. This made development easier to test, debug, and manage with AI.
+
+**Phase 1: Discover** — Topic input, AI research, problem generation with evidence, problem selection.
+
+**Phase 2: Evaluate & Define** — Opportunity scoring across 8 dimensions, product concept generation, comparison view.
+
+**Phase 3: Refine & Workspace** — Section-level AI refinement, save/load opportunities, workspace with CRUD operations.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env` and set:
 
-## Learn More
+- `OPENAI_API_KEY` — Your OpenAI API key (required for live AI responses)
+- `OPENAI_MOCK=true` — Enable mock mode for testing without API credits
 
-To learn more about Next.js, take a look at the following resources:
+### Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js 16, React 19, TypeScript, Tailwind CSS v4, OpenAI API
