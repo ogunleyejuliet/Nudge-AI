@@ -318,11 +318,16 @@ function Header({ sessionId }: { sessionId: string }) {
           </div>
           <span className="font-semibold text-lg">Opportunity Lab</span>
         </Link>
-        {sessionId && (
-          <span className="text-xs text-muted-foreground ml-auto">
-            Session: {sessionId.slice(0, 8)}...
-          </span>
-        )}
+        <div className="flex items-center gap-4 ml-auto">
+          <Link href="/workspace" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            My Opportunities
+          </Link>
+          {sessionId && (
+            <span className="text-xs text-muted-foreground">
+              Session: {sessionId.slice(0, 8)}...
+            </span>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -166,3 +166,52 @@ export const DIMENSION_DESCRIPTIONS: Record<EvaluationDimension, string> = {
   opportunityPotential:
     "Overall potential for a viable product opportunity in this space?",
 };
+
+// Phase 3: Opportunities & Refinement
+
+export type OpportunityStatus = "exploring" | "selected" | "defined";
+
+export interface Opportunity {
+  id: string;
+  createdAt: number;
+  updatedAt: number;
+  userId: string;
+  sessionId: string;
+  topic: string;
+  status: OpportunityStatus;
+  problemTitle: string;
+  problemDescription: string;
+  problemAffectedUsers: string;
+  problemWhyItMatters: string;
+  problemConfidence: string;
+  evidences: EvidenceItem[];
+  inferences: InferenceItem[];
+  assumptions: AssumptionItem[];
+  evaluation: EvaluationWithDetails;
+  concept: ProductConcept;
+}
+
+export interface OpportunityListItem {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  topic: string;
+  status: OpportunityStatus;
+  conceptName: string;
+  conceptOneLiner: string;
+  problemTitle: string;
+  overallScore: number;
+  overallLabel: string;
+}
+
+export const REFINABLE_SECTIONS: Record<string, { label: string; description: string }> = {
+  targetUsers: { label: "Target Users", description: "Refine who this product is for" },
+  valueProposition: { label: "Value Proposition", description: "Refine why users would choose this" },
+  coreFeatures: { label: "Core Features", description: "Refine the core feature set" },
+  mvpFeatures: { label: "MVP Scope", description: "Refine what's in the MVP" },
+  userJourney: { label: "User Journey", description: "Refine the user experience flow" },
+  businessModel: { label: "Business Model", description: "Refine the monetization approach" },
+  proposedSolution: { label: "Proposed Solution", description: "Refine the solution description" },
+  userNeeds: { label: "User Needs", description: "Refine the identified user needs" },
+  majorRisks: { label: "Major Risks", description: "Refine the risk assessment" },
+};

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { authHeaders } from "@/lib/auth";
 import type { ProblemWithDetails } from "@/lib/types";
 
 interface ProductConcept {
@@ -34,10 +35,14 @@ function Section({
   title,
   children,
   icon,
+  onRefine,
+  refining,
 }: {
   title: string;
   children: React.ReactNode;
   icon: React.ReactNode;
+  onRefine?: () => void;
+  refining?: boolean;
 }) {
   return (
     <div className="space-y-3">
@@ -46,6 +51,30 @@ function Section({
           {icon}
         </div>
         <h3 className="font-semibold text-base">{title}</h3>
+        {onRefine && (
+          <button
+            onClick={onRefine}
+            disabled={refining}
+            className="ml-auto inline-flex items-center gap-1 text-xs text-primary hover:text-primary-hover disabled:opacity-50 transition-colors"
+          >
+            {refining ? (
+              <>
+                <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Refining...
+              </>
+            ) : (
+              <>
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                </svg>
+                Refine
+              </>
+            )}
+          </button>
+        )}
       </div>
       <div className="pl-8">{children}</div>
     </div>
@@ -106,6 +135,11 @@ export default function ConceptPage({
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [savedOppId, setSavedOppId] = useState<string | null>(null);
+  const [refiningSection, setRefiningSection] = useState<string | null>(null);
+  const [refineError, setRefineError] = useState<string | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -164,6 +198,60 @@ export default function ConceptPage({
     };
     init();
   }, [params]);
+
+  async function handleSave() {
+    if (!concept || !problem || saved) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/opportunities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({ sessionId, problemId: problem.id }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to save");
+      }
+      const data = await res.json();
+      setSaved(true);
+      setSavedOppId(data.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save opportunity");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRefineSection(section: string) {
+    if (!concept || !problem) return;
+    setRefiningSection(section);
+    setRefineError(null);
+    try {
+      const res = await fetch("/api/ai/refine-concept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          section,
+          currentContent: concept.concept[section as keyof typeof concept.concept],
+          problemTitle: problem.title,
+          problemDescription: problem.description,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Refinement failed");
+      }
+      const { refined } = await res.json();
+      setConcept((prev) => prev ? {
+        ...prev,
+        concept: { ...prev.concept, [section]: refined },
+      } : prev);
+    } catch (err) {
+      setRefineError(err instanceof Error ? err.message : "Refinement failed");
+    } finally {
+      setRefiningSection(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -263,6 +351,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("targetUsers")}
+            refining={refiningSection === "targetUsers"}
           >
             <p className="text-sm text-muted-foreground">{c.targetUsers}</p>
           </Section>
@@ -274,6 +364,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("userNeeds")}
+            refining={refiningSection === "userNeeds"}
           >
             <TagList items={c.userNeeds} variant="blue" />
           </Section>
@@ -285,6 +377,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("proposedSolution")}
+            refining={refiningSection === "proposedSolution"}
           >
             <p className="text-sm text-muted-foreground leading-relaxed">
               {c.proposedSolution}
@@ -298,6 +392,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("valueProposition")}
+            refining={refiningSection === "valueProposition"}
           >
             <p className="text-sm text-muted-foreground leading-relaxed font-medium">
               {c.valueProposition}
@@ -311,6 +407,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("coreFeatures")}
+            refining={refiningSection === "coreFeatures"}
           >
             <TagList items={c.coreFeatures} />
           </Section>
@@ -323,6 +421,8 @@ export default function ConceptPage({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               }
+              onRefine={() => handleRefineSection("mvpFeatures")}
+              refining={refiningSection === "mvpFeatures"}
             >
               <TagList items={c.mvpFeatures} variant="green" />
             </Section>
@@ -345,6 +445,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
               </svg>
             }
+            onRefine={() => handleRefineSection("userJourney")}
+            refining={refiningSection === "userJourney"}
           >
             <NumberedList items={c.userJourney} />
           </Section>
@@ -356,6 +458,8 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("businessModel")}
+            refining={refiningSection === "businessModel"}
           >
             <p className="text-sm text-muted-foreground leading-relaxed p-4 rounded-lg border border-border bg-muted/30">
               {c.businessModel}
@@ -392,16 +496,59 @@ export default function ConceptPage({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             }
+            onRefine={() => handleRefineSection("majorRisks")}
+            refining={refiningSection === "majorRisks"}
           >
             <TagList items={c.majorRisks} variant="red" />
           </Section>
 
           <div className="pt-6 border-t border-border space-y-4">
+            {refineError && (
+              <div className="bg-danger/5 border border-danger/20 rounded-lg p-4 flex items-center justify-between">
+                <span className="text-danger text-sm">{refineError}</span>
+                <button onClick={() => setRefineError(null)} className="text-danger hover:underline text-sm">
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {saved && (
+              <div className="bg-success/5 border border-success/20 rounded-lg p-4 text-center">
+                <p className="text-success font-medium text-sm">
+                  Saved to My Opportunities!
+                </p>
+                {savedOppId && (
+                  <Link
+                    href={`/workspace/${savedOppId}`}
+                    className="text-sm text-primary hover:underline mt-1 inline-block"
+                  >
+                    View in Workspace →
+                  </Link>
+                )}
+              </div>
+            )}
+
             <p className="text-xs text-muted-foreground italic text-center">
               This product concept was generated by AI based on the problem evaluation.
               All proposed features, business models, and strategies need to be validated with real users and market research before proceeding.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
+              {!saved ? (
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="px-6 py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary-hover disabled:opacity-50 transition-colors text-center text-sm"
+                >
+                  {saving ? "Saving..." : "Save to Workspace"}
+                </button>
+              ) : (
+                <Link
+                  href={`/workspace/${savedOppId}`}
+                  className="px-6 py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary-hover transition-colors text-center text-sm"
+                >
+                  Open in Workspace
+                </Link>
+              )}
               <Link
                 href={`/discover/${sessionId}/compare`}
                 className="px-6 py-3 rounded-lg font-medium border border-border text-muted-foreground hover:bg-muted transition-colors text-center text-sm"
@@ -410,7 +557,7 @@ export default function ConceptPage({
               </Link>
               <Link
                 href="/discover"
-                className="px-6 py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary-hover transition-colors text-center text-sm"
+                className="px-6 py-3 rounded-lg font-medium border border-border text-muted-foreground hover:bg-muted transition-colors text-center text-sm"
               >
                 Start New Discovery
               </Link>
@@ -432,11 +579,16 @@ function Header({ sessionId }: { sessionId: string }) {
           </div>
           <span className="font-semibold text-lg">Opportunity Lab</span>
         </Link>
-        {sessionId && (
-          <span className="text-xs text-muted-foreground ml-auto">
-            Session: {sessionId.slice(0, 8)}...
-          </span>
-        )}
+        <div className="flex items-center gap-4 ml-auto">
+          <Link href="/workspace" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            My Opportunities
+          </Link>
+          {sessionId && (
+            <span className="text-xs text-muted-foreground">
+              Session: {sessionId.slice(0, 8)}...
+            </span>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -624,3 +624,90 @@ Be specific and practical. This is a proposed concept, not a validated plan.`,
     majorRisks: Array.isArray(parsed.majorRisks) ? parsed.majorRisks : [],
   };
 }
+
+// ── Section Refinement ──
+
+const REFINE_SECTION_LABELS: Record<string, string> = {
+  targetUsers: "Target Users",
+  valueProposition: "Value Proposition",
+  coreFeatures: "Core Features",
+  mvpFeatures: "MVP Features",
+  userJourney: "User Journey",
+  businessModel: "Business Model",
+  proposedSolution: "Proposed Solution",
+  userNeeds: "User Needs",
+  majorRisks: "Major Risks",
+};
+
+function buildRefinePrompt(section: string, problemTitle: string): string {
+  const label = REFINE_SECTION_LABELS[section] || section;
+  return `You are a product strategist. Improve the "${label}" section of a product concept.
+
+CONTEXT: This product concept addresses the problem: "${problemTitle}"
+
+RULES:
+1. Improve quality, specificity, and actionability.
+2. Preserve the intent and scope of the original.
+3. Do not add entirely new directions unless the original is clearly lacking.
+4. Be practical and specific, not generic.
+5. Return ONLY the refined content for this section — nothing else.
+
+The output format depends on the section type:
+- For string sections (targetUsers, valueProposition, businessModel, proposedSolution): return a single refined string.
+- For array sections (coreFeatures, mvpFeatures, userJourney, userNeeds, majorRisks): return a JSON array of refined items.
+
+Return ONLY valid JSON.`;
+}
+
+export async function refineConceptSection(
+  section: string,
+  currentContent: string | string[],
+  problemTitle: string,
+  _problemDescription: string // eslint-disable-line @typescript-eslint/no-unused-vars
+): Promise<string | string[]> {
+  if (MOCK_MODE) {
+    if (Array.isArray(currentContent)) {
+      return currentContent.map((item) => `[Refined] ${item}`);
+    }
+    return `[Refined] ${currentContent}`;
+  }
+
+  const prompt = buildRefinePrompt(section, problemTitle);
+  const isArray = Array.isArray(currentContent);
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    temperature: 0.7,
+    max_tokens: 1500,
+    messages: [
+      { role: "system", content: prompt },
+      {
+        role: "user",
+        content: `Current "${REFINE_SECTION_LABELS[section]}" content:\n\n${
+          isArray
+            ? JSON.stringify(currentContent, null, 2)
+            : currentContent
+        }\n\nRefine this content. Return ONLY the improved version as valid JSON.`,
+      },
+    ],
+    response_format: { type: "json_object" },
+  });
+
+  const content = response.choices[0]?.message?.content;
+  if (!content) throw new Error("No response from AI");
+
+  const parsed = JSON.parse(content);
+
+  if (isArray) {
+    if (Array.isArray(parsed)) return parsed.map(String);
+    if (Array.isArray(parsed.items)) return parsed.items.map(String);
+    if (Array.isArray(parsed[section])) return parsed[section].map(String);
+    return currentContent.map(String);
+  }
+
+  if (typeof parsed === "string") return parsed;
+  if (typeof parsed[section] === "string") return parsed[section];
+  if (typeof parsed.content === "string") return parsed.content;
+  if (typeof parsed.value === "string") return parsed.value;
+  return currentContent;
+}

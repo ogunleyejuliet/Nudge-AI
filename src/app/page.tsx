@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -17,6 +18,12 @@ export default function Home() {
             </div>
             <span className="font-semibold text-lg">Opportunity Lab</span>
           </div>
+          <Link
+            href="/workspace"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            My Opportunities
+          </Link>
         </div>
       </header>
 

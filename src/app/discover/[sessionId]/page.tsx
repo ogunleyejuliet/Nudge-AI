@@ -352,12 +352,20 @@ export default function SessionPage({
               <span className="font-semibold text-lg">Opportunity Lab</span>
             </Link>
           </div>
-          <Link
-            href="/discover"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            New Discovery
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/workspace"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              My Opportunities
+            </Link>
+            <Link
+              href="/discover"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              New Discovery
+            </Link>
+          </div>
         </div>
       </header>
 

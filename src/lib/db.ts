@@ -13,6 +13,11 @@ import {
   createProductConcept,
   getProductConcept,
   getSessionProductConcepts,
+  createOpportunity,
+  getOpportunitiesForUser,
+  getOpportunityById,
+  updateOpportunity,
+  deleteOpportunity,
 } from "./store";
 import type {
   AIProblem,
@@ -21,6 +26,7 @@ import type {
   EvaluationWithDetails,
   DimensionResult,
   ProductConcept,
+  OpportunityStatus,
 } from "./types";
 
 let userId = "anonymous-user";
@@ -202,4 +208,162 @@ export async function getProductConceptForProblem(problemId: string) {
 
 export async function getSessionProductConceptsList(sessionId: string) {
   return getSessionProductConcepts(sessionId);
+}
+
+// ── Phase 3: Opportunities ──
+
+export async function saveOpportunity(
+  userId: string,
+  sessionId: string,
+  topic: string,
+  problem: {
+    id: string;
+    title: string;
+    description: string;
+    affectedUsers: string;
+    whyItMatters: string;
+    confidence: string;
+  },
+  evidences: Array<{ content: string; source: string; strength: string }>,
+  inferences: Array<{ content: string }>,
+  assumptions: Array<{ content: string }>,
+  evaluation: EvaluationWithDetails,
+  concept: ProductConcept
+) {
+  const row = createOpportunity(userId, {
+    userId,
+    sessionId,
+    topic,
+    status: "defined",
+    problem,
+    evidence: evidences,
+    inferences,
+    assumptions,
+    evaluation: {
+      id: evaluation.id,
+      createdAt: evaluation.createdAt.getTime(),
+      problemId: evaluation.problemId,
+      sessionId: evaluation.sessionId,
+      overallScore: evaluation.overallScore,
+      overallLabel: evaluation.overallLabel,
+      overallExplanation: evaluation.overallExplanation,
+      dimensions: evaluation.dimensions.map((d) => ({
+        id: "",
+        evaluationId: evaluation.id,
+        dimension: d.dimension,
+        score: d.score,
+        label: d.label,
+        explanation: d.explanation,
+        supportingEvidence: d.supportingEvidence,
+        evidenceType: d.evidenceType,
+      })),
+      strengths: evaluation.strengths,
+      weaknesses: evaluation.weaknesses,
+      uncertainties: evaluation.uncertainties,
+      needsValidation: evaluation.needsValidation,
+    },
+    concept,
+  });
+
+  return {
+    id: row.id,
+    createdAt: new Date(row.createdAt),
+    updatedAt: new Date(row.updatedAt),
+    topic: row.topic,
+    status: row.status,
+    conceptName: row.concept.name,
+    conceptOneLiner: row.concept.oneLiner,
+    problemTitle: row.problem.title,
+    overallScore: row.evaluation.overallScore,
+    overallLabel: row.evaluation.overallLabel,
+  };
+}
+
+export async function getOpportunity(userId: string, opportunityId: string) {
+  const row = getOpportunityById(opportunityId);
+  if (!row || row.userId !== userId) return null;
+  return {
+    id: row.id,
+    createdAt: new Date(row.createdAt),
+    updatedAt: new Date(row.updatedAt),
+    sessionId: row.sessionId,
+    topic: row.topic,
+    status: row.status,
+    problem: row.problem,
+    evidence: row.evidence,
+    inferences: row.inferences,
+    assumptions: row.assumptions,
+    evaluation: {
+      id: row.evaluation.id,
+      createdAt: new Date(row.evaluation.createdAt),
+      problemId: row.evaluation.problemId,
+      sessionId: row.evaluation.sessionId,
+      overallScore: row.evaluation.overallScore,
+      overallLabel: row.evaluation.overallLabel,
+      overallExplanation: row.evaluation.overallExplanation,
+      dimensions: row.evaluation.dimensions,
+      strengths: row.evaluation.strengths,
+      weaknesses: row.evaluation.weaknesses,
+      uncertainties: row.evaluation.uncertainties,
+      needsValidation: row.evaluation.needsValidation,
+    },
+    concept: row.concept,
+  };
+}
+
+export async function listOpportunities(userId: string) {
+  const rows = getOpportunitiesForUser(userId);
+  return rows.map((row) => ({
+    id: row.id,
+    createdAt: new Date(row.createdAt),
+    updatedAt: new Date(row.updatedAt),
+    topic: row.topic,
+    status: row.status,
+    conceptName: row.concept.name,
+    conceptOneLiner: row.concept.oneLiner,
+    problemTitle: row.problem.title,
+    overallScore: row.evaluation.overallScore,
+    overallLabel: row.evaluation.overallLabel,
+  }));
+}
+
+export async function updateOpportunityConcept(
+  userId: string,
+  opportunityId: string,
+  concept: ProductConcept,
+  status?: OpportunityStatus
+) {
+  const row = updateOpportunity(userId, opportunityId, { concept, status });
+  if (!row) return null;
+  return {
+    id: row.id,
+    createdAt: new Date(row.createdAt),
+    updatedAt: new Date(row.updatedAt),
+    sessionId: row.sessionId,
+    topic: row.topic,
+    status: row.status,
+    problem: row.problem,
+    evidence: row.evidence,
+    inferences: row.inferences,
+    assumptions: row.assumptions,
+    evaluation: {
+      id: row.evaluation.id,
+      createdAt: new Date(row.evaluation.createdAt),
+      problemId: row.evaluation.problemId,
+      sessionId: row.evaluation.sessionId,
+      overallScore: row.evaluation.overallScore,
+      overallLabel: row.evaluation.overallLabel,
+      overallExplanation: row.evaluation.overallExplanation,
+      dimensions: row.evaluation.dimensions,
+      strengths: row.evaluation.strengths,
+      weaknesses: row.evaluation.weaknesses,
+      uncertainties: row.evaluation.uncertainties,
+      needsValidation: row.evaluation.needsValidation,
+    },
+    concept: row.concept,
+  };
+}
+
+export async function removeOpportunity(userId: string, opportunityId: string) {
+  return deleteOpportunity(userId, opportunityId);
 }
