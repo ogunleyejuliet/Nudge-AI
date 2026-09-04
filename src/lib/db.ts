@@ -7,8 +7,21 @@ import {
   getSessionProblems,
   selectProblem,
   getProblemWithDetails,
+  createEvaluation,
+  getEvaluationForProblem,
+  getSessionEvaluations,
+  createProductConcept,
+  getProductConcept,
+  getSessionProductConcepts,
 } from "./store";
-import type { AIProblem, ResearchSessionData, ProblemWithDetails } from "./types";
+import type {
+  AIProblem,
+  ResearchSessionData,
+  ProblemWithDetails,
+  EvaluationWithDetails,
+  DimensionResult,
+  ProductConcept,
+} from "./types";
 
 let userId = "anonymous-user";
 
@@ -109,4 +122,84 @@ export async function getProblemDetails(
     inferences: data.inferences.map((i) => ({ content: i.content })),
     assumptions: data.assumptions.map((a) => ({ content: a.content })),
   };
+}
+
+// ── Phase 2: Evaluations ──
+
+export async function saveEvaluation(
+  problemId: string,
+  sessionId: string,
+  overallScore: number,
+  overallLabel: string,
+  overallExplanation: string,
+  dimensions: DimensionResult[],
+  strengths: string[],
+  weaknesses: string[],
+  uncertainties: string[],
+  needsValidation: string[]
+): Promise<string> {
+  return createEvaluation(
+    problemId,
+    sessionId,
+    overallScore,
+    overallLabel,
+    overallExplanation,
+    dimensions,
+    strengths,
+    weaknesses,
+    uncertainties,
+    needsValidation
+  );
+}
+
+export async function getEvaluation(
+  problemId: string
+): Promise<EvaluationWithDetails | null> {
+  const data = getEvaluationForProblem(problemId);
+  if (!data) return null;
+
+  return {
+    id: data.id,
+    createdAt: new Date(data.createdAt),
+    problemId: data.problemId,
+    sessionId: data.sessionId,
+    overallScore: data.overallScore,
+    overallLabel: data.overallLabel,
+    overallExplanation: data.overallExplanation,
+    dimensions: data.dimensions.map((d) => ({
+      dimension: d.dimension as EvaluationWithDetails["dimensions"][0]["dimension"],
+      score: d.score,
+      label: d.label,
+      explanation: d.explanation,
+      supportingEvidence: d.supportingEvidence,
+      evidenceType: d.evidenceType as "evidence" | "inference" | "assumption",
+    })),
+    strengths: data.strengths,
+    weaknesses: data.weaknesses,
+    uncertainties: data.uncertainties,
+    needsValidation: data.needsValidation,
+  };
+}
+
+export async function getSessionEvaluationsData(sessionId: string) {
+  return getSessionEvaluations(sessionId);
+}
+
+// ── Phase 2: Product Concepts ──
+
+export async function saveProductConcept(
+  problemId: string,
+  sessionId: string,
+  evaluationId: string,
+  concept: ProductConcept
+): Promise<string> {
+  return createProductConcept(problemId, sessionId, evaluationId, concept);
+}
+
+export async function getProductConceptForProblem(problemId: string) {
+  return getProductConcept(problemId);
+}
+
+export async function getSessionProductConceptsList(sessionId: string) {
+  return getSessionProductConcepts(sessionId);
 }

@@ -376,21 +376,22 @@ export default function ProblemDetailPage({
 
           <div className="pt-4 border-t border-border">
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <button
-                onClick={handleSelect}
-                disabled={selecting || problem.isSelected}
-                className={`w-full sm:w-auto px-6 py-3 rounded-lg font-medium transition-colors cursor-pointer ${
-                  problem.isSelected
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-primary text-primary-foreground hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-                }`}
-              >
-                {selecting
-                  ? "Selecting..."
-                  : problem.isSelected
-                    ? "Problem Selected"
-                    : "Select This Problem"}
-              </button>
+              {problem.isSelected ? (
+                <Link
+                  href={`/discover/${sessionId}/evaluate`}
+                  className="w-full sm:w-auto px-6 py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary-hover transition-colors text-center"
+                >
+                  Evaluate This Opportunity
+                </Link>
+              ) : (
+                <button
+                  onClick={handleSelect}
+                  disabled={selecting}
+                  className="w-full sm:w-auto px-6 py-3 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  {selecting ? "Selecting..." : "Select This Problem"}
+                </button>
+              )}
               <Link
                 href={`/discover/${sessionId}`}
                 className="w-full sm:w-auto px-6 py-3 rounded-lg font-medium border border-border text-muted-foreground hover:bg-muted transition-colors text-center"

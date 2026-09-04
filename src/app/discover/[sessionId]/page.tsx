@@ -420,16 +420,27 @@ export default function SessionPage({
               </div>
 
               {hasSelection && (
-                <div className="text-center pt-4">
-                  <p className="text-sm text-muted-foreground mb-3">
+                <div className="text-center pt-4 space-y-3">
+                  <p className="text-sm text-muted-foreground">
                     Problem selected! Ready for the next phase.
                   </p>
-                  <button
-                    disabled
-                    className="inline-flex items-center gap-2 bg-muted text-muted-foreground px-6 py-2.5 rounded-lg font-medium text-sm cursor-not-allowed"
-                  >
-                    Phase 2 — Coming Soon
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <Link
+                      href={`/discover/${session.id}/evaluate`}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-medium text-sm hover:bg-primary-hover transition-colors"
+                    >
+                      Evaluate Opportunity
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </Link>
+                    <Link
+                      href={`/discover/${session.id}/compare`}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium text-sm border border-border text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      Compare All Problems
+                    </Link>
+                  </div>
                 </div>
               )}
             </>
