@@ -1,4 +1,4 @@
-# Opportunity Lab
+# Nudge AI
 
 AI-powered product discovery platform that helps users find, evaluate, and structure real problems into actionable product concepts.
 

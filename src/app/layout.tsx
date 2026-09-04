@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Opportunity Lab — Discover What Problems Matter",
+  title: "Nudge AI — Discover What Problems Matter",
   description:
     "AI-powered discovery platform that identifies real problems and opportunities in any market or topic.",
 };

@@ -229,10 +229,10 @@ export default function SessionPage({
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">
-                  OL
-                </span>
-              </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+                N
+              </span>
+            </div>
+            <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
         </header>
@@ -256,10 +256,10 @@ export default function SessionPage({
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">
-                  OL
-                </span>
-              </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+                N
+              </span>
+            </div>
+            <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
         </header>
@@ -292,10 +292,10 @@ export default function SessionPage({
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">
-                  OL
-                </span>
-              </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+                N
+              </span>
+            </div>
+            <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
         </header>
@@ -346,10 +346,10 @@ export default function SessionPage({
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">
-                  OL
-                </span>
-              </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+                N
+              </span>
+            </div>
+            <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
           <div className="flex items-center gap-4">

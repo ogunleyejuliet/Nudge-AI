@@ -72,10 +72,10 @@ export default function DiscoverPage() {
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">
-                  OL
+                  N
                 </span>
               </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+              <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
         </header>
@@ -171,10 +171,10 @@ export default function DiscoverPage() {
           >
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">
-                OL
+                N
               </span>
             </div>
-            <span className="font-semibold text-lg">Opportunity Lab</span>
+            <span className="font-semibold text-lg">Nudge AI</span>
           </Link>
         </div>
       </header>

@@ -34,6 +34,23 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-nudge-primary: #1118d8;
+  --color-nudge-primary-hover: #0e13ad;
+  --color-nudge-secondary: #2525c9;
+  --color-nudge-surface: #fafafa;
+  --color-nudge-surface-2: #f2f2f2;
+  --color-nudge-ink: #090909;
+  --color-nudge-ink-2: #686868;
+  --color-nudge-line: #d9d9d9;
+  --color-nudge-line-soft: #e8e8e8;
+  --color-nudge-pattern: #d0d0d0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

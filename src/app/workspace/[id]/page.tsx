@@ -114,9 +114,9 @@ export default function OpportunityDetailPage() {
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">OL</span>
+                <span className="text-primary-foreground font-bold text-sm">N</span>
               </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+              <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
         </header>
@@ -146,9 +146,9 @@ export default function OpportunityDetailPage() {
           <div className="max-w-5xl mx-auto px-6 py-4 flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">OL</span>
+                <span className="text-primary-foreground font-bold text-sm">N</span>
               </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+              <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
         </header>
@@ -175,9 +175,9 @@ export default function OpportunityDetailPage() {
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">OL</span>
+                <span className="text-primary-foreground font-bold text-sm">N</span>
               </div>
-              <span className="font-semibold text-lg">Opportunity Lab</span>
+              <span className="font-semibold text-lg">Nudge AI</span>
             </Link>
           </div>
           <div className="flex items-center gap-4">
