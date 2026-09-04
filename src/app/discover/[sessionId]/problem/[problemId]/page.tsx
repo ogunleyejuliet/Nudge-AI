@@ -217,6 +217,11 @@ export default function ProblemDetailPage({
           <div className="space-y-3">
             <div className="flex items-center gap-3 flex-wrap">
               <ConfidenceBadge level={problem.confidence} />
+              {problem.subcategory && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                  {problem.subcategory}
+                </span>
+              )}
               {problem.isSelected && (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                   Selected

@@ -29,6 +29,7 @@ export interface Problem {
   affectedUsers: string;
   whyItMatters: string;
   confidence: "low" | "medium" | "high";
+  subcategory: string | null;
   isSelected: boolean;
 }
 
@@ -254,6 +255,7 @@ export function createProblems(
     affectedUsers: string;
     whyItMatters: string;
     confidence: "low" | "medium" | "high";
+    subcategory?: string;
     evidence: Array<{
       content: string;
       source: string;
@@ -277,6 +279,7 @@ export function createProblems(
       affectedUsers: ai.affectedUsers,
       whyItMatters: ai.whyItMatters,
       confidence: ai.confidence,
+      subcategory: ai.subcategory ?? null,
       isSelected: false,
     };
     database.problems.push(problem);

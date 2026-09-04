@@ -47,6 +47,11 @@ function ProblemCard({
           </h3>
           <ConfidenceBadge level={problem.confidence} />
         </div>
+        {problem.subcategory && (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+            {problem.subcategory}
+          </span>
+        )}
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
           {problem.description}
         </p>

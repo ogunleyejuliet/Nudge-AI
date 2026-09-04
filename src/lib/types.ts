@@ -19,6 +19,7 @@ export interface AIProblem {
   affectedUsers: string;
   whyItMatters: string;
   confidence: "low" | "medium" | "high";
+  subcategory?: string;
   evidence: EvidenceItem[];
   inferences: InferenceItem[];
   assumptions: AssumptionItem[];
@@ -33,6 +34,7 @@ export interface ProblemWithDetails {
   affectedUsers: string;
   whyItMatters: string;
   confidence: string;
+  subcategory: string | null;
   isSelected: boolean;
   evidences: EvidenceItem[];
   inferences: InferenceItem[];

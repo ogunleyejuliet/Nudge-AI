@@ -83,6 +83,7 @@ export async function getSessionData(
       affectedUsers: p.affectedUsers,
       whyItMatters: p.whyItMatters,
       confidence: p.confidence,
+      subcategory: p.subcategory ?? null,
       isSelected: p.isSelected,
       evidences: p.evidences.map((e) => ({
         content: e.content,
@@ -118,6 +119,7 @@ export async function getProblemDetails(
     affectedUsers: data.affectedUsers,
     whyItMatters: data.whyItMatters,
     confidence: data.confidence,
+    subcategory: data.subcategory ?? null,
     isSelected: data.isSelected,
     evidences: data.evidences.map((e) => ({
       content: e.content,
