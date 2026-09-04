@@ -62,3 +62,10 @@ After implementing the features, I tested the complete flow from discovering a p
 This phase completed the main V1 user journey:
 
 Discover → Evaluate → Create → Refine → Save
+Day 2
+I made a few important changes to my project, Opportunity Lab.
+
+Changed the brand name: I updated the product name and branding to better reflect the direction of the product.
+Redesigned the landing page: I redesigned the landing page to make the product clearer, improve the visual experience, and make the main action easier to understand.
+Improved the AI model: I updated the AI discovery logic so it produces more specific and useful problems based on the topic selected by the user, instead of giving generic problems that could apply to almost any topic.
+Improved opportunity discovery: I added more checks around relevance and diversity so the problems generated are more closely connected to the selected market or topic.
